@@ -64,13 +64,42 @@ pip install -e .
 
 # Publishing
 
-Refresh poetry lock file as per https://python-poetry.org/docs/basic-usage/#as-a-library-developer
+## One-time setup
 ```bash
-poetry update
+pip install twine
 ```
 
-Run tests
+Create API tokens for your PyPI and TestPyPI accounts, then write them to new config file using the script below:
 
 ```bash
+content="[pypi]
+username = __token__
+password = <PyPI token>
+[testpypi]
+username = __token__
+password = <TestPyPI token>"
+
+echo "$content" > $HOME/.pypirc
+```
+
+[More details here](https://packaging.python.org/en/latest/specifications/pypirc/#using-a-pypi-token).
+
+## Build
+```bash
+poetry update # to keep dependencies recent. 
+# Run tests
 poetry build
+```
+
+## Test Publish
+```bash
+twine upload --repository testpypi dist/* 
+pip install -i https://test.pypi.org/simple/ communitysolarprograms
+python 
+import community_solar_programs
+```
+
+## Publish
+```bash
+twine upload dist/* 
 ```
